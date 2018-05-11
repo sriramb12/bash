@@ -1,0 +1,31 @@
+alias vrc="vi ~/.bash_aliases"
+alias src="source ~/.bashrc"
+fnd()
+{
+   find . -type d -name $1
+}
+pyfind()
+{
+   find . -type f -name "*.py" -exec grep -l $1 {} \;
+}
+fng()
+{
+   find . -type f -exec grep -il $1 {} \;
+}
+extn()
+{
+   find . -type f -name "*$1"
+}
+fnf()
+{
+   find . -type f -name "*$1*"
+}
+
+alias rsi="cd cont*rsi"
+alias pul="git pull"
+alias psh="git push"
+alias gst="git status"
+alias gdf="git diff"
+alias gcl="git clone"
+alias cmt="git commit -a"
+alias grsi="git clone https://github.com/sriramb12/contrail-rsi.git"
