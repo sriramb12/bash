@@ -1,0 +1,240 @@
+function  sshrem
+{
+if [ "$#" -ne 1 ]; then
+    echo "Usage: "
+    echo "      sshrem <node> "
+    return
+fi
+   scp root@10.219.90.$1:$2 .
+  ssh-copy-id -i ~/.ssh/id_rsa.pub root@10.219.90.$1
+}
+alias src="source ~/.bashrc"
+alias cls="clear"
+alias dl="cd ~/Downloads";
+alias code="cd ~/work/contrail/code";
+alias cases="cd ~/work/cases"
+alias dump="cd ~/work/cases/dump"
+alias vrc="vi ~/.bashscripts"
+alias val="vi ~/.bashaliases"
+alias py="python"
+alias gst="git status -uno"
+alias gdf="git diff"
+alias gcmt="git commit -a --allow-empty-message -m ''"
+alias gco="git checkout "
+alias gcl="git clone "
+function get
+{
+if [ "$#" -ne 2 ]; then
+    echo "Usage: "
+    echo "      get <node> <file>"
+    return
+fi
+   scp root@10.219.90.$1:$2 .
+}
+function put 
+{
+if [ "$#" -ne 2 ]; then
+    echo "Usage: "
+    echo "      put <file>"
+    return
+fi
+   scp $2 root@10.219.90.$1:
+}
+alias ostk="ssh root@10.219.90.135"
+alias oldcontrail="ssh root@10.219.90.126"
+alias xostk="ssh -X test@10.219.90.81"
+alias ctr="ssh sb@10.219.90.82"
+alias slg="ssh root@10.219.90.136"
+alias fs="ssh root@10.219.90.68"
+alias xctrl="ssh -X test@10.219.90.84"
+alias c1="ssh -X root@10.219.90.68"
+alias c2="ssh -X root@10.219.90.72"
+alias Ftp="ssh svl-jtac-lnx01.juniper.net"
+alias Ftp1="ssh svl-jtac-tool01"
+alias aic22="ssh root@10.85.19.201"
+alias aic="ssh root@10.85.23.9"
+alias aic250="ssh root@10.85.188.250"
+alias hyp="ssh -X root@10.219.90.71"
+alias cntrlogs="cd ~/work/contrail/log"
+alias cnt="cd ~/work/contrail/log"
+alias logs="cd ~/work/contrail/log"
+alias cs="cscope -d"
+alias lck="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+function epch2dt()
+{
+  date -r $1 '+%m/%d/%Y:%H:%M:%S'
+}
+function sshp()
+{
+   ip=$2
+   user=$1    
+   if [ "$#" -lt 1 ]; then
+    echo "Usage: "
+    echo "     sshp [user] <ip>"
+    return
+   fi
+   if [ "$#" -eq 1 ]; then
+    user=root    
+    ip=$1
+   fi
+  echo sshpass $user $ip
+  ssh-copy-id -i ~/.ssh/id_rsa.pub $user@$ip
+  ssh -X $user@$ip
+}
+alias epochToDate=epch2dt
+CASEPATH=/Users/bsriram/work/cases/dump
+function csupdate()
+{
+   action=fetch
+   if `test -e $CASEPATH/notes/$1-notes.txt`
+   then
+      echo case# $1 is cached
+      status=`grep "status:" details/$1*`
+      statuscode=`echo $status | cut -f2 -d: | sed 's/ //g'`
+      echo $status
+      if [ $statuscode == "'Closed'" ]; 
+        then
+         sed '2q;d' details/$1*
+         echo "    case details and notes are :"
+         echo
+         ls details/$1* notes/$1*
+         return
+      fi
+      mv $CASEPATH/notes/$1-notes.txt notes/$1-notes.txt.tmp
+   fi
+   $CASEPATH/cad.py  $1 
+   mv $1*/*details.txt details/$1-details.txt
+   mv $1*/*notes.txt notes/$1-notes.txt
+   if `test -e $CASEPATH/notes/$1-notes.txt.tmp`
+   then
+     diff notes/$1-notes.txt notes/$1-notes.txt.tmp
+   fi
+   echo "    case details and notes are :"
+   sed '2q;d' details/$1*
+   ls details/$1* notes/$1*
+   echo
+}
+function csfind()
+{
+  unalias ls
+  if `ls details/*$1* 2>/dev/null`; then ls details/*$1*; else echo not found; fi
+}
+function csget()
+{
+   cd /Users/bsriram/work/cases/dump
+   action=fetch
+   if `test -e $CASEPATH/notes/$1-notes.txt`
+   then
+      echo case# $1 is cached
+      status=`grep "status:" details/$1*`
+      statuscode=`echo $status | cut -f2 -d: | sed 's/ //g'`
+      echo $status
+
+      echo csupdate $1
+      echo "   please use if case note refresh is needed"
+   fi
+   $CASEPATH/cad.py  $1 
+   mv $1*/*details.txt details/$1-details.txt
+   mv $1*/*notes.txt notes/$1-notes.txt
+   if `test -e $CASEPATH/notes/$1-notes.txt.tmp`
+   then
+     diff notes/$1-notes.txt notes/$1-notes.txt.tmp
+   fi
+   echo "    case details and notes are :"
+   sed '2q;d' details/$1*
+   ls details/$1* notes/$1*
+   echo
+}
+function  csdesc()
+{
+ pushd $CASEPATH/details
+ for i in *det*;
+ do
+  s=`sed '2q\;d' $i`
+  echo $i:$s
+ done
+ popd 
+}
+
+function csrepo()
+{
+  i=`find . -name "case_details.txt" -exec grep srId: {} \; | cut -f2 -d: | sed "s/\'//g" `
+  for j in $i:
+  do
+     cp  $j*/case_details.txt details/$j-details.txt
+  done
+}
+
+function findlast()
+{
+   filename=$2
+   ago=$1
+   #hundred_days_ago=$(date -d 'now - 100 days' +%s)
+   age=$(date -d 'now - $ago days' +%s)
+   file_time=$(date -r "$filename" +%s)
+# ...and then just use integer math:
+   if (( file_time <= age )); then
+     echo "$filename is older than $1"
+   fi
+}
+
+function arghelp()
+{
+if [ "$#" -ne 1 ]; then
+    echo "Usage: "
+    echo "     < >" 
+fi
+}
+
+function showSetup()
+{
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: "
+    echo "      showsetup <ip>"
+    return
+fi
+   rm -f testbed.py
+   serv=10.219.90.$1
+   scp root@$serv://opt/contrail/utils/fabfile/testbeds/testbed.py . 2>/dev/null
+
+   if [ -e testbed.py ] 
+   then
+   grep -A7 ^#Management testbed.py 
+   grep -A8 ^#Role testbed.py 
+   else
+     echo $serv is not a contrail setup node
+   fi
+}
+alias setup=showSetup
+
+
+function comp()
+{
+if [ "$#" -ne 1 ]; then
+    echo "Usage: "
+    echo "      comp <ip>"
+    return
+fi
+   comp="10.219.90.$1"
+   echo connecting to $comp
+   ssh -X root@$comp 
+}
+
+function diskfull()
+{
+echo Resolution: Followed below steps to clear the Audit files
+echo Open terminal
+echo sudo su -
+echo cd /var/audit/
+echo ls -ltr
+echo rm -rf "*"
+}
+function Repo()
+{
+  echo http://mayamruga/github-build/
+  echo http://10.204.216.50/github-build/
+}
+
+#contrail build machine for unstripped binaries
+alias bld="ssh guest@ubuntu-build04.contrail.juniper.net"
