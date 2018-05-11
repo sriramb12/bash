@@ -29,3 +29,5 @@ alias gdf="git diff"
 alias gcl="git clone"
 alias cmt="git commit -a"
 alias grsi="git clone https://github.com/sriramb12/contrail-rsi.git"
+alias gbash="git clone https://github.com/sriramb12/bash.git"
+
